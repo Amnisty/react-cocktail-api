@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import CardPokemon from './Components/CardPokemon/CardPokemon'
   const url = 'https://pokeapi.co/api/v2/pokemon/'
 
 function App() {
   const [pokemon, setPokemon] = useState({}) 
-  async function searchPokemon() {
-  const pokeCenter = await(await fetch(url)).json()
+
+  async function searchPokemon(pageUrl) {
+  const pokeCenter = await(await fetch(pageUrl ?? url)).json()
 
   const pokePromises = pokeCenter.results.map(async item =>
     (await fetch(item.url)).json()
@@ -23,9 +22,15 @@ function App() {
   }, [])
   
   return (
-    <div>{pokemon?.results?.map(poke => 
-      <CardPokemon image={poke.front_default} title={poke.name}/>
-    )}</div>    
+    <main className='container'>
+      <div>
+        <button className='me-5' hidden={!pokemon.previous} onClick={() => searchPokemon(pokemon.previous)}>Back</button>
+        <button hidden={!pokemon.next} onClick={() => searchPokemon(pokemon.next)}>Next</button>
+      </div>
+      <div className='d-flex gap-3 flex-wrap'>{pokemon?.results?.map(poke => 
+        <CardPokemon image={poke.sprites.front_default} title={poke.name} description={poke.base_experience} description2={poke.height}/>
+      )}</div>    
+    </main>
   )
 }
 
