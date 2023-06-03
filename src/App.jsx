@@ -5,12 +5,16 @@ import './App.css'
   const url = 'https://pokeapi.co/api/v2/pokemon/'
 
 function App() {
-  const [pokemon, setPokemon] = useState({})
-  
+  const [pokemon, setPokemon] = useState({}) 
   async function searchPokemon() {
-  const chiringuito = await(await fetch(url)).json()
-  console.log(chiringuito)
-  setPokemon(chiringuito)
+  const pokeCenter = await(await fetch(url)).json()
+
+  const pokePromises = pokeCenter.results.map(async item =>
+    (await fetch(item.url)).json()
+  )
+  pokeCenter.results = await Promise.all(pokePromises)
+  console.log(pokeCenter)
+  setPokemon(pokeCenter)
 }
 
   useEffect(() => {
@@ -18,7 +22,7 @@ function App() {
   }, [])
   
   return (
-    <div>{pokemon?.results?.map(cariñosas => <li>{cariñosas.name}</li>)}</div>    
+    <div>{pokemon?.results?.map(gibberish => <li>{gibberish.name}</li>)}</div>    
   )
 }
 
